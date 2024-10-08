@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "ai-farming-python-app"
+version = "0.1.0"
+description = ""
+authors = ["Judah <i460958@FontysICT.nl>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+numpy = "^2.1.2"
+pandas = "^2.2.3"
+click = "^8.1.7"
+mypy = "^1.11.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
