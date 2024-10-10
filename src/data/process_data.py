@@ -1,17 +1,13 @@
-import click
-import numpy as np
-import pandas as pd
 
-@click.command()
-@click.option(
-    '--file_path',
-    required=True,
-    type=str,
-    help='path to the csv file'
-    )
-def main(file_path):
-    df = pd.read_csv(file_path)
-    print(df.shape)
 
-if __name__ == "__main__":
-    main()
+def load_data(file_path):
+    fileExtension = file_path.split('.')[-1]
+
+    if fileExtension == 'csv':
+        df = pd.read_csv(file_path)
+    elif fileExtension == 'xlsx' or fileExtension == 'xls':
+        df = pd.read_excel(file_path)
+    else:
+        raise ValueError('File extension not supported: {fileExtension}'.format(fileExtension=fileExtension))
+
+    return df
