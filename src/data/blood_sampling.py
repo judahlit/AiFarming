@@ -88,9 +88,9 @@ def load_metadata(file_path: str):
     barn_name = df["BedrijfRelatie_Naam_V"]
     link_number = df["Koppelnr_V"]
     company_location = df["BedrijfRelatie_BezPostcodePlaats_V"]
-    company_age = df["Leeftijd_V"]
+    week_number = df["Leeftijd_V"]
     measurement_number = df["Metingnr_V"]
-    week_number = df["HemaWeeknr_V"]
+    hematic_week_number = df["HemaWeeknr_V"]
     measurement_date = df["Datum_V"] # TODO: maybe combine date and time into one column
     measurement_time = df["Tijd_V"]
     # amount = df["Aant_V"] # not sure what this is
@@ -100,9 +100,9 @@ def load_metadata(file_path: str):
         "barn_name": barn_name,
         "link_number": link_number,
         "company_location": company_location,
-        "company_age": company_age,
-        "measurement_number": measurement_number,
         "week_number": week_number,
+        "measurement_number": measurement_number,
+        "hematic_week_number": hematic_week_number,
         "measurement_date": measurement_date,
         "measurement_time": measurement_time,
         # "amount": amount,
@@ -113,9 +113,9 @@ class Metadata:
     barn_name: str
     link_number: int
     company_location: str
-    company_age: int
-    measurement_number: int
     week_number: int
+    measurement_number: int
+    hematic_week_number: int
     measurement_date: str
     measurement_time: str
     # amount: int
@@ -126,9 +126,9 @@ class Metadata:
         self.barn_name = metadata_dict["barn_name"]
         self.link_number = metadata_dict["link_number"]
         self.company_location = metadata_dict["company_location"]
-        self.company_age = metadata_dict["company_age"]
-        self.measurement_number = metadata_dict["measurement_number"]
         self.week_number = metadata_dict["week_number"]
+        self.measurement_number = metadata_dict["measurement_number"]
+        self.hematic_week_number = metadata_dict["hematic_week_number"]
         self.measurement_date = metadata_dict["measurement_date"]
         self.measurement_time = metadata_dict["measurement_time"]
         # self.amount = metadata_dict["amount"]

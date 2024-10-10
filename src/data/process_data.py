@@ -1,4 +1,4 @@
-
+import pandas as pd
 
 def load_data(file_path):
     fileExtension = file_path.split('.')[-1]

@@ -13,10 +13,7 @@ import pandas as pd
 def main(file_path):
     bloodData = d.BloodSamplingData(file_path)
     
-    print(bloodData.meta.company_name)
-    
-    
-    
+    print(bloodData.meta.company_name)    
     
 if __name__ == "__main__":
     main()
