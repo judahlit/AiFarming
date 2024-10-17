@@ -24,8 +24,7 @@ def parse_all(blood_sampling_directory, slaughter_directory):
     for item in os.listdir(blood_sampling_directory):
         datafile = d.BloodSamplingData(os.path.join(blood_sampling_directory, item))
         blood_sampling_data_files.append(datafile)
-        print(datafile.meta.week_number)
-        
+    
     print('Successfully loaded blood sampling data')
     
     
@@ -68,6 +67,27 @@ def parse_all(blood_sampling_directory, slaughter_directory):
             
     # insert slaughter data
     # TODO
+    
+    for datafile in slaughter_data_files_xls:
+        for index, row in datafile.df.iterrows():
+            db.insert_slaughter_data(
+                row['id'],
+                row['birth_date'],
+                row['slaughter_date'],
+                row['lifetime_in_days'],
+                row['weight']
+            )
+    
+    for datafile in slaughter_data_files_csv:
+        for index, row in datafile.df.iterrows():
+            db.insert_slaughter_data(
+                row['id'],
+                row['birth_date'],
+                row['slaughter_date'],
+                row['lifetime_in_days'],
+                row['weight']
+            )
+    
     
     db.commit()
     

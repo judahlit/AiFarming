@@ -4,8 +4,8 @@ CREATE TABLE IF NOT EXISTS cow (
   country VARCHAR(4),
   coat_color VARCHAR(50),
 
-  birth_date DATE,
-  slaughter_date DATE,
+  birth_date VARCHAR,
+  slaughter_date VARCHAR,
   lifetime_days INTEGER,
   slaughter_weight FLOAT
 );

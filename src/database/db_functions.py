@@ -52,23 +52,27 @@ def commit():
 
 
 def insert_slaughter_data(id, birth_date, slaughter_date, lifetime_days, slaughter_weight):
-    conn = sqlite3.connect('database.db')
+    global conn
+    
+    
+    if (conn is None):
+        conn = sqlite3.connect('database.db')
     c = conn.cursor()
     
+    slaughter_date = slaughter_date.strftime('%Y-%m-%d')
+    birth_date = birth_date.strftime('%Y-%m-%d')
+    
     # check if animal id already exists
-    c.execute('SELECT * FROM cows WHERE id = ?', (id,))
+    c.execute('SELECT * FROM cow WHERE id = ?', (id,))
     if c.fetchone() is not None:
         print('Animal with id:', id, 'already exists in the database, updating')
         c.execute(
-            'UPDATE cows SET birth_date = ?, slaughter_date = ?, lifetime_days = ?, slaughter_weight = ? WHERE id = ?',
+            'UPDATE cow SET birth_date = ?, slaughter_date = ?, lifetime_days = ?, slaughter_weight = ? WHERE id = ?',
             (birth_date, slaughter_date, lifetime_days, slaughter_weight, id)
         )
         return
     
     c.execute(
-        'INSERT INTO cows (id, sex, country, coat_color, birth_date, slaughter_date, lifetime_days, slaughter_weight) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+        'INSERT INTO cow (id, sex, country, coat_color, birth_date, slaughter_date, lifetime_days, slaughter_weight) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
         (id, None, None, None, birth_date, slaughter_date, lifetime_days, slaughter_weight)
     )
-    
-    conn.commit()
-    conn.close()
