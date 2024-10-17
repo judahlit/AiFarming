@@ -59,6 +59,10 @@ def parse_blood_sampling_weeks(df: pd.DataFrame):
         "DetailSoort_Omschr_V": "coat_color",
         "DetailSexe_BedrRegCode_V": "sex",
     }
+    
+    
+    # add id column (ear tag number with country code)
+    df["id"] = df["ScanLand_ISO2Dier_V"] + df["ScanLevensnr_V"]
 
     return df.rename(columns=column_mapping)
 
@@ -143,8 +147,8 @@ class BloodSamplingData:
         self.df = parse_blood_sampling_weeks(load_blood_sampling_weeks(file_path))
         self.meta = load_metadata(file_path)
         
-        print('Successfully loaded blood sampling data')
-        print('rows:', len(self.df))
-        print('columns:', len(self.df.columns))
+        # print('Successfully loaded blood sampling data')
+        # print('rows:', len(self.df))
+        # print('columns:', len(self.df.columns))
 
 
