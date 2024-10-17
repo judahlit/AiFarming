@@ -1,5 +1,7 @@
 import sqlite3
 
+
+
 def build_tables():
     conn = sqlite3.connect('database.db')
     c = conn.cursor()
@@ -24,20 +26,26 @@ def delete_db():
     conn.commit()
     conn.close()
     
-    
+conn = None
 def insert_blood_sampling_data(id, sex, country, coat_color):
-    conn = sqlite3.connect('database.db')
+    global conn
+    
+    
+    if (conn is None):
+        conn = sqlite3.connect('database.db')
     c = conn.cursor()
     
     # check if animal id already exists
-    c.execute('SELECT * FROM blood_sampling_data WHERE id = ?', (id,))
+    c.execute('SELECT * FROM cow WHERE id = ?', (id,))
     if c.fetchone() is not None:
         print('Animal with id:', id, 'already exists in the database, updating')
-        c.execute('UPDATE blood_sampling_data SET sex = ?, country = ?, coat_color = ? WHERE id = ?', (sex, country, coat_color, id))
+        c.execute('UPDATE cow SET sex = ?, country = ?, coat_color = ? WHERE id = ?', (sex, country, coat_color, id))
         return
     
     
-    c.execute('INSERT INTO blood_sampling_data (id, country, coat_color) VALUES (?, ?, ?, ?)', (id, country, coat_color))
+    c.execute('INSERT INTO cow (id, sex, country, coat_color) VALUES (?, ?, ?, ?)', (id, sex, country, coat_color))
     
+    
+def commit():
     conn.commit()
     conn.close()

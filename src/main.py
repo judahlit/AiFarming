@@ -5,6 +5,7 @@ import pandas as pd
 import zipfile
 import os
 
+from database import db
 
 
 # from typing import List
@@ -51,11 +52,24 @@ def parse_all(blood_sampling_directory, slaughter_directory):
     slaughter_data_files_xlsx = [file for file in slaughter_data_files_xlsx if not file.df is None]
     
     print('Successfully loaded slaughter data files xlsx:', len(slaughter_data_files_xlsx), 'csv:', len(slaughter_data_files_csv), 'xls:', len(slaughter_data_files_xls))
-
-
-
     
+    # db
+    db.build_tables()
     
+    # insert blood sampling data
+    for datafile in blood_sampling_data_files:
+        for index, row in datafile.df.iterrows():
+            db.insert_blood_sampling_data(
+                row['id'],
+                row['sex'],
+                row['ear_tag_country'],
+                row['coat_color']
+            )
+            
+    # insert slaughter data
+    # TODO
+    
+    db.commit()
     
     
     
