@@ -5,7 +5,6 @@ import pandas as pd
 import zipfile
 import os
 
-from database import db
 
 
 # from typing import List
@@ -53,8 +52,6 @@ def parse_all(blood_sampling_directory, slaughter_directory):
     
     print('Successfully loaded slaughter data files xlsx:', len(slaughter_data_files_xlsx), 'csv:', len(slaughter_data_files_csv), 'xls:', len(slaughter_data_files_xls))
 
-    # save to sqlite db
-    db.build_tables()
     
     
     
