@@ -49,3 +49,26 @@ def insert_blood_sampling_data(id, sex, country, coat_color):
 def commit():
     conn.commit()
     conn.close()
+
+
+def insert_slaughter_data(id, birth_date, slaughter_date, lifetime_days, slaughter_weight):
+    conn = sqlite3.connect('database.db')
+    c = conn.cursor()
+    
+    # check if animal id already exists
+    c.execute('SELECT * FROM cows WHERE id = ?', (id,))
+    if c.fetchone() is not None:
+        print('Animal with id:', id, 'already exists in the database, updating')
+        c.execute(
+            'UPDATE cows SET birth_date = ?, slaughter_date = ?, lifetime_days = ?, slaughter_weight = ? WHERE id = ?',
+            (birth_date, slaughter_date, lifetime_days, slaughter_weight, id)
+        )
+        return
+    
+    c.execute(
+        'INSERT INTO cows (id, sex, country, coat_color, birth_date, slaughter_date, lifetime_days, slaughter_weight) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+        (id, None, None, None, birth_date, slaughter_date, lifetime_days, slaughter_weight)
+    )
+    
+    conn.commit()
+    conn.close()
