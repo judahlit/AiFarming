@@ -1,4 +1,4 @@
-from . import data as d
+from aifarming import data as d
 
 import click
 import numpy as np

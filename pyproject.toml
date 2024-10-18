@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "ai-farming-python-app"
+name = "aifarming"
 version = "0.1.0"
 description = ""
 authors = ["Judah <i460958@FontysICT.nl>"]
