@@ -1,11 +1,12 @@
-import data as d
+from . import data as d
+
 import click
 import numpy as np
 import pandas as pd
 import zipfile
 import os
 
-from database import db
+from .database import db
 
 
 # from typing import List

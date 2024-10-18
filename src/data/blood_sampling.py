@@ -60,6 +60,8 @@ def parse_blood_sampling_weeks(df: pd.DataFrame):
         "DetailSexe_BedrRegCode_V": "sex",
     }
     
+    # Convert all values in "ScanLevensnr_V" column to strings
+    df["ScanLevensnr_V"] = df["ScanLevensnr_V"].apply(lambda x: str(x))
     
     # add id column (ear tag number with country code)
     df["id"] = df["ScanLand_ISO2Dier_V"] + df["ScanLevensnr_V"]
