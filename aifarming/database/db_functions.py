@@ -7,7 +7,7 @@ def build_tables():
     c = conn.cursor()
     
     # execute sql file
-    with open('src/database/schema.sql', 'r') as f:
+    with open('aifarming/database/schema.sql', 'r') as f:
         sql = f.read()
         c.executescript(sql)
 
@@ -19,7 +19,7 @@ def delete_db():
     c = conn.cursor()
     
     # execute sql file
-    with open('src/database/delete.sql', 'r') as f:
+    with open('aifarming/database/delete.sql', 'r') as f:
         sql = f.read()
         c.executescript(sql)
 

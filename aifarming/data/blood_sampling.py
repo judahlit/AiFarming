@@ -1,3 +1,4 @@
+import re
 import pandas as pd
 
 
@@ -32,9 +33,6 @@ def load_blood_sampling_weeks(file_path: str) -> pd.DataFrame:
     return df
 
 
- 
-
-
 # makes the data more readable by renaming the columns
 def parse_blood_sampling_weeks(df: pd.DataFrame):
     column_mapping = {
@@ -46,11 +44,6 @@ def parse_blood_sampling_weeks(df: pd.DataFrame):
         "Bijspuiten_V": "injection",
         "ScanLand_ISO2Dier_V": "ear_tag_country",
         "ScanLevensnr_V": "ear_tag_number",
-        "HbWaarde1_V": "hb_1",
-        "HbWaarde2_V": "hb_2",
-        "HbWaarde3_V": "hb_3",
-        "HbWaarde4_V": "hb_4",
-        "HbWaarde5_V": "hb_5",
         "SerumWaarde2_V": "serum_2",
         "SerumWaarde3_V": "serum_3",
         "SerumWaarde4_V": "serum_4",
@@ -60,14 +53,44 @@ def parse_blood_sampling_weeks(df: pd.DataFrame):
         "DetailSexe_BedrRegCode_V": "sex",
     }
     
-    # Convert all values in "ScanLevensnr_V" column to strings
-    df["ScanLevensnr_V"] = df["ScanLevensnr_V"].apply(lambda x: str(x))
+    df, levensnr_column = find_column_and_convert(df, "levensnr")
+    df, land_column = find_column_and_convert(df, "land")
+    df["id"] = df[land_column] + df[levensnr_column]
+
+    df = find_and_rename_hb_columns(df)
+    df.rename(columns=column_mapping)
+    print(df.columns)
+
+    return df
+
+
+def find_and_rename_hb_columns(df: pd.DataFrame):
+    # Column names match the regex if they start with "hb" followed by a number
+    pattern = re.compile(r"hb.*?(\d+)", re.IGNORECASE)
+    matching_columns = [col for col in df.columns if pattern.search(col)]
     
-    # add id column (ear tag number with country code)
-    df["id"] = df["ScanLand_ISO2Dier_V"] + df["ScanLevensnr_V"]
+    # Extract the number and sort by it
+    sorted_columns = sorted(matching_columns, key=lambda col: int(pattern.search(col).group(1)))
 
-    return df.rename(columns=column_mapping)
+    # Rename columns and add them to the DataFrame
+    for col in sorted_columns:
+        number = pattern.search(col).group(1)
+        new_col_name = f"hb_{number}"
+        df[new_col_name] = df[col]
+        df = df.drop(columns=col)
+    
+    return df
 
+
+def find_column_and_convert(df: pd.DataFrame, search: str):
+    column = next((col for col in df.columns if search in col.lower()), None)
+
+    if not column:
+        raise ValueError("No column containing " + search + " found in the data")
+    
+    df[column] = df[column].apply(lambda x: str(x))
+
+    return (df, column)
 
 ### Metadata Example:
 # BedrijfRelatie_Naam_V                               Van Meel Mts.
