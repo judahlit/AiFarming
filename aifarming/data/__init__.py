@@ -1,2 +1,3 @@
+from .blood_sampling_irregular_format import BloodSamplingDataIrregular
 from .blood_sampling import BloodSamplingData
 from .slaughter_data import SlaughterData

@@ -27,7 +27,7 @@ def delete_db():
     conn.close()
     
 conn = None
-def insert_blood_sampling_data(id, sex, country, coat_color):
+def insert_blood_sampling_data(id, country, coat_color, hb_1, hb_2, hb_3, hb_4):
     global conn
     
     
@@ -39,11 +39,17 @@ def insert_blood_sampling_data(id, sex, country, coat_color):
     c.execute('SELECT * FROM cow WHERE id = ?', (id,))
     if c.fetchone() is not None:
         print('Animal with id:', id, 'already exists in the database, updating')
-        c.execute('UPDATE cow SET sex = ?, country = ?, coat_color = ? WHERE id = ?', (sex, country, coat_color, id))
+        c.execute(  
+            'UPDATE cow SET country = ?, coat_color = ?, hb_1 = ?, hb_2 = ?, hb_3 = ?, hb_4 = ? WHERE id = ?',
+            (country, coat_color, hb_1, hb_2, hb_3, hb_4, id)
+        )
         return
     
     
-    c.execute('INSERT INTO cow (id, sex, country, coat_color) VALUES (?, ?, ?, ?)', (id, sex, country, coat_color))
+    c.execute(
+        'INSERT INTO cow (id, country, coat_color, hb_1, hb_2, hb_3, hb_4) VALUES (?, ?, ?, ?, ?, ?, ?)',
+        (id, country, coat_color, hb_1, hb_2, hb_3, hb_4)
+    )
     
     
 def commit():
@@ -73,6 +79,6 @@ def insert_slaughter_data(id, birth_date, slaughter_date, lifetime_days, slaught
         return
     
     c.execute(
-        'INSERT INTO cow (id, sex, country, coat_color, birth_date, slaughter_date, lifetime_days, slaughter_weight) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-        (id, None, None, None, birth_date, slaughter_date, lifetime_days, slaughter_weight)
+        'INSERT INTO cow (id, birth_date, slaughter_date, lifetime_days, slaughter_weight) VALUES (?, ?, ?, ?, ?)',
+        (id, birth_date, slaughter_date, lifetime_days, slaughter_weight)
     )
