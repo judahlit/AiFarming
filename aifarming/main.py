@@ -1,4 +1,4 @@
-from aifarming import data as d
+from . import data
 
 import click
 import numpy as np
@@ -20,29 +20,29 @@ def cli():
 @click.argument('slaughter_directory')
 def parse_all(blood_sampling_directory, slaughter_directory):
     
-    blood_sampling_data_files: list[d.BloodSamplingData] = []
+    blood_sampling_data_files: list[data.BloodSamplingData] = []
     
     for item in os.listdir(blood_sampling_directory):
-        datafile = d.BloodSamplingData(os.path.join(blood_sampling_directory, item))
+        datafile = data.BloodSamplingData(os.path.join(blood_sampling_directory, item))
         blood_sampling_data_files.append(datafile)
     
     print('Successfully loaded blood sampling data')
     
     
     # slaughter data can come in 3 different formats, xls, csv and xlsx for the hb values
-    slaughter_data_files_xls: list[d.SlaughterData] = []
-    slaughter_data_files_csv: list[d.SlaughterData] = []
-    slaughter_data_files_xlsx: list[d.SlaughterData] = []
+    slaughter_data_files_xls: list[data.SlaughterData] = []
+    slaughter_data_files_csv: list[data.SlaughterData] = []
+    slaughter_data_files_xlsx: list[data.SlaughterData] = []
     
     # go through subdirectories too 
     for root, dirs, files in os.walk(slaughter_directory):
         for file in files:
             if file.endswith('.xls'):
-                slaughter_data_files_xls.append(d.SlaughterData(os.path.join(root, file)))
+                slaughter_data_files_xls.append(data.SlaughterData(os.path.join(root, file)))
             elif file.endswith('.csv'):
-                slaughter_data_files_csv.append(d.SlaughterData(os.path.join(root, file)))
+                slaughter_data_files_csv.append(data.SlaughterData(os.path.join(root, file)))
             elif file.endswith('.xlsx'):
-                slaughter_data_files_xlsx.append(d.SlaughterData(os.path.join(root, file)))
+                slaughter_data_files_xlsx.append(data.SlaughterData(os.path.join(root, file)))
             else:
                 print('Unknown file format:', file)
                 
@@ -61,9 +61,12 @@ def parse_all(blood_sampling_directory, slaughter_directory):
         for index, row in datafile.df.iterrows():
             db.insert_blood_sampling_data(
                 row['id'],
-                row['sex'],
-                row['ear_tag_country'],
-                row['coat_color']
+                row['country'],
+                row['coat_color'],
+                row['hb_1'],
+                row['hb_2'],
+                row['hb_3'],
+                row['hb_4']
             )
             
     # insert slaughter data

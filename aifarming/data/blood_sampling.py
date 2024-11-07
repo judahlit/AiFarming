@@ -12,7 +12,7 @@ def load_blood_sampling_weeks(file_path: str) -> pd.DataFrame:
     skipped_rows = 0
     for i in range(50):  # 50 is an arbitrary number
         contents = _df[first_column][i]
-        if contents == "Volgnr_V":
+        if contents == "Land":
             skipped_rows = i
             break
 
@@ -25,10 +25,10 @@ def load_blood_sampling_weeks(file_path: str) -> pd.DataFrame:
     df.columns = df.iloc[0]
     df = df[1:]
 
-    # remove rows with all NaN values for the "Volgnr_V" column
-    df = df.dropna(subset=["Volgnr_V"])
-    # remove rows that are a repeat of the volgnr_v column
-    df = df[df["Volgnr_V"] != "Volgnr_V"]
+    # remove rows with all NaN values for the "Land" column
+    df = df.dropna(subset=["Land"])
+    # remove rows that are a repeat of the Land column
+    df = df[df["Land"] != "Land"]
 
     return df
 
@@ -36,31 +36,15 @@ def load_blood_sampling_weeks(file_path: str) -> pd.DataFrame:
 # makes the data more readable by renaming the columns
 def parse_blood_sampling_weeks(df: pd.DataFrame):
     column_mapping = {
-        "Volgnr_V": "sequence_number",
-        "EersteDier_V": "first_animal_V",  # not sure what this is
-        "OnbekendDier_V": "unknown_animal_V",  # not sure what this is
-        "Brokkalf_V": "Brokkalf_V",  # not sure what this is
-        "ScanWerknr_V": "scan_work_number",  # don't know what this is
-        "Bijspuiten_V": "injection",
-        "ScanLand_ISO2Dier_V": "ear_tag_country",
-        "ScanLevensnr_V": "ear_tag_number",
-        "SerumWaarde2_V": "serum_2",
-        "SerumWaarde3_V": "serum_3",
-        "SerumWaarde4_V": "serum_4",
-        "SerumWaarde5_V": "serum_5",
-        "Afdelingnr_V": "department_number",
-        "DetailSoort_Omschr_V": "coat_color",
-        "DetailSexe_BedrRegCode_V": "sex",
+        "Land": "country",
+        "Haarkleur": "coat_color",
     }
+    df = df.rename(columns=column_mapping)
     
     df, levensnr_column = find_column_and_convert(df, "levensnr")
-    df, land_column = find_column_and_convert(df, "land")
-    df["id"] = df[land_column] + df[levensnr_column]
+    df["id"] = df["country"] + df[levensnr_column]
 
     df = find_and_rename_hb_columns(df)
-    df.rename(columns=column_mapping)
-    print(df.columns)
-
     return df
 
 
@@ -92,76 +76,62 @@ def find_column_and_convert(df: pd.DataFrame, search: str):
 
     return (df, column)
 
-### Metadata Example:
-# BedrijfRelatie_Naam_V                               Van Meel Mts.
-# Koppelnr_V                                                2247366
-# BedrijfRelatie_BezPostcodePlaats_V              4751SM Oud-Gastel
-# Leeftijd_V                                                     22
-# BedrijfRelatie_Telefoon1_V                                    NaN
-# Metingnr_V                                                      4
-# BedrijfRelatie_Mobiel_V                                       NaN
-# HemaWeeknr_V                                                   22
-# Datum_V                                       2023-12-05 00:00:00
-# Tijd_V                                                   10:07:33
-# Aant_V                                                         91
-# IntegratieRelatie_Naam_V              Kalvermesterij Hooijer B.V.
+
 def load_metadata(file_path: str):
     df = pd.read_excel(file_path)
-    # name the columns based on the first row and remove it
-    df.columns = df.iloc[0]
-    df = df[1:]
-    
-    # remove everything except the first row
-    df = df.iloc[0]
-    
-    barn_name = df["BedrijfRelatie_Naam_V"]
-    link_number = df["Koppelnr_V"]
-    company_location = df["BedrijfRelatie_BezPostcodePlaats_V"]
-    week_number = df["Leeftijd_V"]
-    measurement_number = df["Metingnr_V"]
-    hematic_week_number = df["HemaWeeknr_V"]
-    measurement_date = df["Datum_V"] # TODO: maybe combine date and time into one column
-    measurement_time = df["Tijd_V"]
-    # amount = df["Aant_V"] # not sure what this is
-    company_name = df["IntegratieRelatie_Naam_V"]
+
+    company_name = df.iat[2, 2]
+    company_location = df.iat[3, 2]
+    phone_number = df.iat[4, 2]
+    mobile_phone_number = df.iat[5, 2]
+    measurement_datetime = df.iat[6, 2]
+    integration_name = df.iat[7, 2]
+    link_number = df.iat[2, 9]
+    week_number = df.iat[3, 9]
+    measurement_number = df.iat[4, 9]
+    hematic_week_number = df.iat[5, 9]
+    amount = df.iat[6, 9]
     
     return Metadata({
-        "barn_name": barn_name,
+        "company_name": company_name,
+        "phone_number": phone_number,
+        "mobile_phone_number": mobile_phone_number,
         "link_number": link_number,
         "company_location": company_location,
         "week_number": week_number,
         "measurement_number": measurement_number,
         "hematic_week_number": hematic_week_number,
-        "measurement_date": measurement_date,
-        "measurement_time": measurement_time,
-        # "amount": amount,
-        "company_name": company_name
+        "measurement_datetime": measurement_datetime,
+        "amount": amount,
+        "integration_name": integration_name
     })
 
 class Metadata:
-    barn_name: str
+    company_name: str
+    phone_number: str
+    mobile_phone_number: str
     link_number: int
     company_location: str
     week_number: int
     measurement_number: int
     hematic_week_number: int
-    measurement_date: str
-    measurement_time: str
-    # amount: int
-    company_name: str
+    measurement_datetime: str
+    amount: int
+    integration_name: str
     
     
     def __init__(self, metadata_dict):
-        self.barn_name = metadata_dict["barn_name"]
+        self.company_name = metadata_dict["company_name"]
+        self.phone_number = metadata_dict["phone_number"]
+        self.mobile_phone_number = metadata_dict["mobile_phone_number"]
         self.link_number = metadata_dict["link_number"]
         self.company_location = metadata_dict["company_location"]
         self.week_number = metadata_dict["week_number"]
         self.measurement_number = metadata_dict["measurement_number"]
         self.hematic_week_number = metadata_dict["hematic_week_number"]
-        self.measurement_date = metadata_dict["measurement_date"]
-        self.measurement_time = metadata_dict["measurement_time"]
-        # self.amount = metadata_dict["amount"]
-        self.company_name = metadata_dict["company_name"]
+        self.measurement_datetime = metadata_dict["measurement_datetime"]
+        self.amount = metadata_dict["amount"]
+        self.integration_name = metadata_dict["integration_name"]
 
 
 class BloodSamplingData:
@@ -175,5 +145,4 @@ class BloodSamplingData:
         # print('Successfully loaded blood sampling data')
         # print('rows:', len(self.df))
         # print('columns:', len(self.df.columns))
-
-
+        # print('metadata:', self.meta.__dict__)
