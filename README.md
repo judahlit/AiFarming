@@ -1,4 +1,4 @@
-# AI Farming Python App
+# AI Farming Python App (Deprecated)
 
 ## Description
 
